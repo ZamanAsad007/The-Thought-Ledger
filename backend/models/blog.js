@@ -6,12 +6,12 @@ const blogSchema = new mongoose.Schema(
     content: { type: String, required: true },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "category",
       required: true,
     },
     coverImage: { type: String },
