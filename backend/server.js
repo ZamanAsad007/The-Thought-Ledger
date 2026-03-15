@@ -4,6 +4,7 @@ const cors = require('cors')
 const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
 const blogRoutes = require('./routes/blogRoutes')
+const userRoutes = require('./routes/userRoutes')
 require('./models/category')
 
 dotenv.config()
@@ -15,6 +16,7 @@ app.use(cors())
 app.use(express.json())
 app.use('/api/auth', authRoutes)
 app.use('/api/blogs', blogRoutes)
+app.use('/api/users', userRoutes)
 
 app.get('/', (req, res) => {
   res.send('Blog API is running...')
