@@ -36,6 +36,9 @@ function Home() {
           <button className="btn" onClick={() => navigate('/register')}>
             Sign Up as Author
           </button>
+          <button className="btn" onClick={() => navigate('/login')}>
+            Already an Author? Login
+          </button>
         </div>
       </div>
     </div>

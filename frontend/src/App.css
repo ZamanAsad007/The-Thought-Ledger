@@ -1,12 +1,53 @@
 .page {
   padding: 56px 28px;
-  max-width: 920px;
-  margin: 0 auto;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+
+.navbarInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+}
+
+.navBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.navLogo {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+}
+
+.navTitle {
+  font-family: var(--heading);
+  font-weight: 600;
+  letter-spacing: 0.04rem;
+  color: var(--text-h);
 }
 
 @media (max-width: 1024px) {
   .page {
     padding: 36px 20px;
+  }
+
+  .navbarInner {
+    padding: 12px 20px;
   }
 }
 
@@ -56,6 +97,39 @@
 
 .btnSecondary:hover {
   box-shadow: var(--shadow-soft);
+}
+
+.error {
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.authCard {
+  max-width: 520px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .list {

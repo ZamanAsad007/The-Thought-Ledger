@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
 const Blog = require('../models/blog')
+const Category = require('../models/category')
 
 router.get('/authors', async(req, res)=>{
     try{
@@ -26,6 +27,30 @@ router.get('/authors/:id', async (req, res) => {
     res.json(author)
   } catch (err) {
     res.status(500).json({ message: err.message })
+  }
+})
+
+router.get('/categories', async(req, res)=>{
+  try{
+    const categories = await Category.find()
+    res.json(categories)
+  }catch(err){
+    res.status(500).json({message:'Server error'})
+  }
+})
+
+const { protect } = require('../middleware/authMiddleware')
+router.put('/profile', protect, async(req, res)=>{
+  try{
+    const {name, bio, profilePic, socialLinks}= req.body
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {name, bio, profilePic, socialLinks}
+      ,{new:true}
+    ).select('-password')
+    res.json(updatedUser)
+  }catch(err){
+    res.status(500).json({message:err.message})
   }
 })
 module.exports = router
