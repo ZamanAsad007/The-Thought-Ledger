@@ -39,6 +39,10 @@ function AuthorDashboard() {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         const profile = profileRes.data;
+
+        
+        login({ ...user, ...profile });
+
         setForm({
           name: profile.name || '',
           bio: profile.bio || '',
@@ -203,7 +207,7 @@ function AuthorDashboard() {
               <img
                 src={form.profilePic}
                 alt="Profile preview"
-                style={{ maxWidth: "220px", borderRadius: "var(--radius-sm)" }}
+                className="profilePreviewImg"
               />
             )}
           </div>

@@ -41,9 +41,22 @@ function AuthorProfilePage() {
   if (!author) return <p>Author not found</p>;
   return (
     <div className="page">
+      <div className="row">
+        <button
+          className="btn btnSecondary"
+          type="button"
+          onClick={() => {
+            if (window.history.length > 1) navigate(-1);
+            else navigate('/authors');
+          }}
+        >
+          Back
+        </button>
+      </div>
+
       <div className="card">
         {author.profilePic && (
-          <img className="avatarLg" src={author.profilePic} alt={author.username} />
+          <img className="avatarMd" src={author.profilePic} alt={author.username} />
         )}
         <h2>{author.username}</h2>
         <p className="muted">@{author.username}</p>

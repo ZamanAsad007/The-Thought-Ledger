@@ -12,7 +12,7 @@ import {
 } from "recharts";
 
 function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user, login, logout } = useAuth();
   const [blogs, setBlogs] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,14 +21,18 @@ function Dashboard() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const [blogsRes, statsRes] = await Promise.all([
-          axios.get("/blogs", {
-            headers: { Authorization: `Bearer ${user.token}` },
-          }),
-          axios.get("/users/my/stats", {
-            headers: { Authorization: `Bearer ${user.token}` },
-          }),
+        if (!user?.token) return;
+
+        const headers = { Authorization: `Bearer ${user.token}` };
+        const [meRes, blogsRes, statsRes] = await Promise.all([
+          axios.get('/auth/me', { headers }),
+          axios.get('/blogs', { headers }),
+          axios.get('/users/my/stats', { headers }),
         ]);
+
+        // Ensure dashboard always has latest profile fields after login.
+        login(meRes.data);
+
         setBlogs((blogsRes.data ?? []).slice(0, 10));
         setChartData(statsRes.data ?? []);
       } catch (err) {
@@ -38,7 +42,7 @@ function Dashboard() {
       }
     };
     fetchBlogs();
-  }, []);
+  }, [user?.token]);
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -68,9 +72,9 @@ function Dashboard() {
         <div className="card" style={{ flex: "1 1 320px" }}>
           <div className="authorHeader">
             {user?.profilePic ? (
-              <img className="avatar" src={user.profilePic} alt={user.username} />
+              <img className="avatarSm" src={user.profilePic} alt={user.username} />
             ) : (
-              <div className="avatar avatarPlaceholder" aria-hidden="true" />
+              <div className="avatarPlaceholder" aria-hidden="true" />
             )}
             <div>
               <h3 style={{ margin: 0 }}>{user?.username}</h3>

@@ -170,3 +170,157 @@
   color: var(--text);
   opacity: 0.85;
 }
+
+/* --- Avatars (formal, consistent sizing) --- */
+.avatarSm {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.avatarMd {
+  width: 88px;
+  height: 88px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.avatarPlaceholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--secondary) 75%, transparent);
+}
+
+/* My Profile: show chosen image as a normal preview (not round) */
+.profilePreviewImg {
+  display: block;
+  width: min(100%, 360px);
+  max-height: 240px;
+  height: auto;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.authorCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.authorCardInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.authorCardText {
+  min-width: 0;
+}
+
+.authorCardText h3 {
+  margin: 0;
+}
+
+.authorCardChart {
+  width: 220px;
+  height: 140px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1024px) {
+  .authorCardTop {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .authorCardChart {
+    width: 100%;
+  }
+}
+
+/* --- Rich text editor (Tiptap) --- */
+.richEditor {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--secondary) 82%, transparent);
+  padding: 14px;
+}
+
+.richEditor .ProseMirror {
+  outline: none;
+  min-height: 260px;
+  line-height: 1.8;
+}
+
+.richEditor .ProseMirror p {
+  margin: 0 0 12px;
+}
+
+.richEditor .ProseMirror img {
+  display: block;
+  width: min(100%, 860px);
+  max-height: 420px;
+  height: auto;
+  margin: 14px auto;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 1024px) {
+  .richEditor .ProseMirror img {
+    max-height: 320px;
+  }
+}
+
+/* --- Published blog content --- */
+.coverImage {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 1024px) {
+  .coverImage {
+    max-height: 300px;
+  }
+}
+
+.prose {
+  text-align: left;
+}
+
+.prose p {
+  margin: 0 0 14px;
+  line-height: 1.85;
+}
+
+.prose img {
+  display: block;
+  width: min(100%, 920px);
+  max-height: 520px;
+  height: auto;
+  margin: 18px auto;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 1024px) {
+  .prose img {
+    max-height: 360px;
+  }
+}

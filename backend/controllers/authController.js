@@ -29,6 +29,10 @@ const registerUser = async (req, res) => {
             username: newUser.username,
             email: newUser.email,
             role: newUser.role,
+            name: newUser.name,
+            bio: newUser.bio,
+            profilePic: newUser.profilePic,
+            socialLinks: newUser.socialLinks,
             token: generateToken(newUser._id, newUser.role)
         })
     } catch (err) {
@@ -54,6 +58,10 @@ const loginUser = async(req, res)=>{
             username: extistingUser.username,
             email: extistingUser.email,
             role: extistingUser.role,
+            name: extistingUser.name,
+            bio: extistingUser.bio,
+            profilePic: extistingUser.profilePic,
+            socialLinks: extistingUser.socialLinks,
             token: generateToken(extistingUser._id, extistingUser.role)
         })
     }catch(err){
