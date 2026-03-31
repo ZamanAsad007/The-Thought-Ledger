@@ -32,26 +32,49 @@ function AuthorDashboard() {
   });
 
   useEffect(() => {
-    const fetchBlogs = async () => {
+    const fetchInitialData = async () => {
       try {
+        // Fetch profile first to populate the form
+        const profileRes = await axios.get('/auth/me', {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const profile = profileRes.data;
+        setForm({
+          name: profile.name || '',
+          bio: profile.bio || '',
+          profilePic: profile.profilePic || '',
+          socialLinks: {
+            facebook: profile.socialLinks?.facebook || '',
+            instagram: profile.socialLinks?.instagram || '',
+            twitter: profile.socialLinks?.twitter || '',
+          },
+        });
+
+        // Then fetch blogs and stats
         const [blogsRes, statsRes] = await Promise.all([
-          axios.get("/blogs/my/blogs", {
+          axios.get('/blogs/my/blogs', {
             headers: { Authorization: `Bearer ${user.token}` },
           }),
-          axios.get("/users/my/stats", {
+          axios.get('/users/my/stats', {
             headers: { Authorization: `Bearer ${user.token}` },
           }),
         ]);
         setBlogs(blogsRes.data);
         setChartData(statsRes.data);
       } catch (err) {
-        console.error("Failed to fetch blogs", err);
+        console.error('Failed to fetch initial data', err);
+        setError('Could not load your dashboard data.');
       } finally {
         setLoading(false);
       }
     };
-    fetchBlogs();
-  }, []);
+    if (user?.token) {
+      fetchInitialData();
+    } else {
+      setLoading(false);
+      setError('You must be logged in to view this page.');
+    }
+  }, [user?.token]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -157,10 +180,24 @@ function AuthorDashboard() {
             placeholder="Profile Picture URL"
             value={form.profilePic}
             onChange={handleChange}
+            style={{ display: 'none' }} // Hide the text input
           />
 
           <div className="stack">
-            <input type="file" accept="image/*" onChange={handleProfilePicFileChange} />
+            <button
+              type="button"
+              className="btn btnSecondary"
+              onClick={() => document.getElementById('profilePicInput').click()}
+            >
+              Choose Profile Picture
+            </button>
+            <input
+              id="profilePicInput"
+              type="file"
+              accept="image/*"
+              onChange={handleProfilePicFileChange}
+              style={{ display: 'none' }}
+            />
             <p className="muted">Or upload an image (max 3MB).</p>
             {form.profilePic && (
               <img
@@ -272,7 +309,7 @@ function AuthorDashboard() {
             {new Date(blog.createdAt).toLocaleDateString()} ·{" "}
             {blog.category?.name}
           </p>
-          <p>{blog.content.substring(0, 100)}...</p>
+          <p>{(blog.content ?? '').replace(/<[^>]*>/g, '').substring(0, 100)}...</p>
           <div style={{ marginTop: "10px" }}>
             <button
               onClick={() => navigate(`/edit-blog/${blog._id}`)}

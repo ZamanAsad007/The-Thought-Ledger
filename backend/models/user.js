@@ -23,7 +23,8 @@ const userSchema = new mongoose.Schema({
     instagram: String,
     twitter: String,
     other: [String]
-  } 
+  },
+  name: { type: String }
 },{ timestamps: true });
 
 module.exports = mongoose.model('user', userSchema)

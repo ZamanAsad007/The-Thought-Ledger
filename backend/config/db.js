@@ -7,16 +7,17 @@ const connectDB = async () => {
   const directUri = process.env.MONGO_URI_DIRECT
 
   if (!srvUri && !directUri) {
-    console.error('DB Connection Failed: missing MONGO_URI in .env')
+    console.error('DB Connection Failed: missing MONGO_URI / MONGO_URI_DIRECT in .env')
     process.exit(1)
   }
 
   const attempts = Number(process.env.MONGO_CONNECT_ATTEMPTS ?? 3)
   const delayMs = Number(process.env.MONGO_CONNECT_DELAY_MS ?? 1500)
 
+  // Prefer direct URI when provided (SRV lookups are commonly blocked on some networks)
   const candidates = []
-  if (srvUri) candidates.push({ uri: srvUri, label: 'MONGO_URI' })
   if (directUri) candidates.push({ uri: directUri, label: 'MONGO_URI_DIRECT' })
+  if (srvUri) candidates.push({ uri: srvUri, label: 'MONGO_URI' })
 
   let lastError
 

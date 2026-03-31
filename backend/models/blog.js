@@ -15,6 +15,10 @@ const blogSchema = new mongoose.Schema(
       required: true,
     },
     coverImage: { type: String },
+    location: {
+      label: { type: String, trim: true },
+      url: { type: String, trim: true },
+    },
     published: { type: Boolean, default: true },
   },
   { timestamps: true },

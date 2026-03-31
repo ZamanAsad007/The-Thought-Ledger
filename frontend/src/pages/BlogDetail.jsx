@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from '../api/axios'
+import DOMPurify from 'dompurify'
 
 function BlogDetail() {
     const{id} =useParams()
@@ -22,6 +23,17 @@ function BlogDetail() {
     },[id])
     if (loading) return <p className="page">Loading blog...</p>
   if (!blog) return <p className="page">Blog not found.</p>
+
+  const raw = blog.content ?? ''
+  const normalized = raw.includes('<')
+    ? raw
+    : `<p>${raw
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\n/g, '<br/>')}</p>`
+  const safeHtml = DOMPurify.sanitize(normalized)
+
   return (
     <div className="page">
       <div className="row">
@@ -47,13 +59,20 @@ function BlogDetail() {
             {' · '}
             {new Date(blog.createdAt).toLocaleDateString()}
           </p>
+
+          {blog.location?.label && blog.location?.url && (
+            <p className="muted">
+              Location:{' '}
+              <a href={blog.location.url} target="_blank" rel="noreferrer">
+                {blog.location.label}
+              </a>
+            </p>
+          )}
         </div>
       {blog.coverImage && (
-        <img src={blog.coverImage} alt={blog.title} /> 
+        <img className="coverImage" src={blog.coverImage} alt={blog.title} /> 
       )}
-        <div className="card">
-          {blog.content}
-        </div>
+        <div className="card prose" dangerouslySetInnerHTML={{ __html: safeHtml }} />
       </div>
     </div>
   )

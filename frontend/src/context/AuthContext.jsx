@@ -7,8 +7,10 @@ export function AuthProvider({ children }) {
     );
 
     const login =(userData)=>{
-        setUser(userData)
-        localStorage.setItem('user', JSON.stringify(userData))
+        const currentUser = JSON.parse(localStorage.getItem('user')) || {};
+        const updatedUser = { ...currentUser, ...userData };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
     }
     const logout =()=>{
         setUser(null)

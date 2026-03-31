@@ -43,7 +43,7 @@ function AuthorList() {
             className="btn btnSecondary"
             onClick={() => navigate(-1)}
           >
-             Back
+            Back
           </button>
         </div>
         <h2>All Authors</h2>

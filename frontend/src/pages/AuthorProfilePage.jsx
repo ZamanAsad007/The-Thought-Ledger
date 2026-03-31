@@ -1,23 +1,34 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 function AuthorProfilePage() {
   const { id } = useParams();
   const [author, setAuthor] = useState(null);
   const [blogs, setBlogs] = useState([]);
+  const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [authorRes, blogsRes] = await Promise.all([
+        const [authorRes, blogsRes, statsRes] = await Promise.all([
           axios.get(`/users/authors/${id}`),
           axios.get(`/blogs/author/${id}`),
+          axios.get(`/users/authors/${id}/stats`),
         ]);
         setAuthor(authorRes.data);
         setBlogs(blogsRes.data);
+        setChartData(statsRes.data ?? []);
       } catch (err) {
         console.log(err);
       } finally {
@@ -32,7 +43,7 @@ function AuthorProfilePage() {
     <div className="page">
       <div className="card">
         {author.profilePic && (
-          <img src={author.profilePic} alt={author.username} />
+          <img className="avatarLg" src={author.profilePic} alt={author.username} />
         )}
         <h2>{author.username}</h2>
         <p className="muted">@{author.username}</p>
@@ -68,13 +79,45 @@ function AuthorProfilePage() {
           )}
         </div>
       </div>
+
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Last 20 Blogs by Category</h3>
+        {chartData.length > 0 ? (
+          <div style={{ width: "100%", height: 300 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={false}
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={index} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <p className="muted">No category data yet.</p>
+        )}
+      </div>
+
       <h3>Blogs by {author.username}</h3>
       {blogs.length === 0 && <p>No blogs published yet.</p>}
       {blogs.map((blog) => (
         <div className="card cardInteractive" key={blog._id} onClick={() => navigate(`/blogs/${blog._id}`)}>
           <h4>{blog.title}</h4>
           <p className="muted">{new Date(blog.createdAt).toLocaleDateString()}</p>
-          <p className="muted">{blog.content.substring(0, 100)}...</p>
+          <p className="muted">
+            {(blog.content ?? '').replace(/<[^>]*>/g, '').substring(0, 100)}...
+          </p>
         </div>
       ))}
     </div>

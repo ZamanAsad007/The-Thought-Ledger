@@ -2,20 +2,35 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../api/axios";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 function Dashboard() {
   const { user, logout } = useAuth();
   const [blogs, setBlogs] = useState([]);
+  const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("/blogs", {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        setBlogs((res.data ?? []).slice(0, 10));
+        const [blogsRes, statsRes] = await Promise.all([
+          axios.get("/blogs", {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }),
+          axios.get("/users/my/stats", {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }),
+        ]);
+        setBlogs((blogsRes.data ?? []).slice(0, 10));
+        setChartData(statsRes.data ?? []);
       } catch (err) {
         console.error("Failed to fetch blogs", err);
       } finally {
@@ -35,7 +50,7 @@ function Dashboard() {
         <div>
           <h2>Dashboard</h2>
           <p className="muted">
-            Welcome, {user?.name ?? user?.username ?? "Author"}.
+            Welcome, {user?.username ?? "Author"}.
           </p>
         </div>
         <div className="actions">
@@ -46,6 +61,53 @@ function Dashboard() {
           <button className="btn btnSecondary" onClick={handleLogout}>
             Logout
           </button>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="card" style={{ flex: "1 1 320px" }}>
+          <div className="authorHeader">
+            {user?.profilePic ? (
+              <img className="avatar" src={user.profilePic} alt={user.username} />
+            ) : (
+              <div className="avatar avatarPlaceholder" aria-hidden="true" />
+            )}
+            <div>
+              <h3 style={{ margin: 0 }}>{user?.username}</h3>
+              <p className="muted" style={{ marginTop: 6 }}>
+                {user?.bio || "No bio yet."}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card" style={{ flex: "2 1 420px" }}>
+          <h3 style={{ marginTop: 0 }}>My Last 20 Blogs by Category</h3>
+          {chartData.length > 0 ? (
+            <div style={{ width: "100%", height: 260 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={90}
+                    label={false}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={index} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <p className="muted">Write some blogs to see your category breakdown.</p>
+          )}
         </div>
       </div>
 

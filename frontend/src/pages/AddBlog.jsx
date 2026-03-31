@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../api/axios";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
 
 function AddBlog() {
   const { user } = useAuth();
@@ -12,9 +15,19 @@ function AddBlog() {
     content: "",
     category: "",
     coverImage: "",
+    locationLabel: "",
+    locationUrl: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const editor = useEditor({
+    extensions: [StarterKit, Image],
+    content: form.content || "<p></p>",
+    onUpdate: ({ editor }) => {
+      setForm((prev) => ({ ...prev, content: editor.getHTML() }));
+    },
+  });
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -60,7 +73,22 @@ function AddBlog() {
     setLoading(true);
     setError("");
     try {
-      await axios.post("/blogs", form, {
+      const payload = {
+        ...form,
+        location:
+          form.locationLabel?.trim() || form.locationUrl?.trim()
+            ? {
+                label: form.locationLabel?.trim() || form.locationUrl?.trim(),
+                url: form.locationUrl?.trim(),
+              }
+            : undefined,
+        content: editor?.getHTML?.() ?? form.content,
+      };
+
+      delete payload.locationLabel;
+      delete payload.locationUrl;
+
+      await axios.post("/blogs", payload, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       navigate("/dashboard");
@@ -68,6 +96,46 @@ function AddBlog() {
       setError(err.response?.data?.message || "Failed to publish blog");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleInsertImage = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setError("");
+
+      if (!file.type.startsWith("image/")) {
+        setError("Please select an image file");
+        return;
+      }
+
+      const maxBytes = 3 * 1024 * 1024;
+      if (file.size > maxBytes) {
+        setError("Image is too large (max 3MB)");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await axios.post("/uploads/image", formData, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const url = res.data?.url;
+      if (!url) {
+        setError("Upload succeeded but no URL returned");
+        return;
+      }
+
+      editor?.chain().focus().setImage({ src: url }).run();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to upload image");
+    } finally {
+      e.target.value = "";
     }
   };
 
@@ -116,6 +184,23 @@ function AddBlog() {
             onChange={handleChange}
             value={form.coverImage}
           />
+
+          <div className="row">
+            <input
+              type="text"
+              name="locationLabel"
+              placeholder="Location label (e.g. Jolshiri, Dhaka)"
+              onChange={handleChange}
+              value={form.locationLabel}
+            />
+            <input
+              type="url"
+              name="locationUrl"
+              placeholder="Google Maps link (optional)"
+              onChange={handleChange}
+              value={form.locationUrl}
+            />
+          </div>
           <div className="stack">
             <input
               type="file"
@@ -133,14 +218,23 @@ function AddBlog() {
               />
             )}
           </div>
-          <textarea
-            name="content"
-            placeholder="Write your blog content here..."
-            onChange={handleChange}
-            value={form.content}
-            rows={12}
-            required
-          />
+          <div className="stack">
+            <div className="row" style={{ justifyContent: "space-between" }}>
+              <p className="muted">Content</p>
+              <label className="btn btnSecondary" style={{ cursor: "pointer" }}>
+                Insert image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleInsertImage}
+                  style={{ display: "none" }}
+                />
+              </label>
+            </div>
+            <div className="richEditor">
+              <EditorContent editor={editor} />
+            </div>
+          </div>
           <div className="actions">
             <button className="btn" type="submit" disabled={loading}>
               {loading ? "Publishing…" : "Publish Blog"}

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const blog = require("../models/blog");
 
 const createBlog = async (req, res) => {
-  const { title, content, category, coverImage } = req.body;
+  const { title, content, category, coverImage, location } = req.body;
 
   try {
     const newBlog = await blog.create({
@@ -10,6 +10,7 @@ const createBlog = async (req, res) => {
       content,
       category,
       coverImage,
+      location,
       author: req.user._id,
     });
     res.status(201).json({
@@ -95,12 +96,13 @@ const updateBlog = async (req, res) => {
     }
 
     const allowedUpdates = ((body) => {
-      const { title, content, category, coverImage, published } = body;
+      const { title, content, category, coverImage, published, location } = body;
       const updates = {};
       if (title !== undefined) updates.title = title;
       if (content !== undefined) updates.content = content;
       if (category !== undefined) updates.category = category;
       if (coverImage !== undefined) updates.coverImage = coverImage;
+      if (location !== undefined) updates.location = location;
       if (published !== undefined) updates.published = published;
       return updates;
     })(req.body);
