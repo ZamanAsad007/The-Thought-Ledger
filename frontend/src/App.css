@@ -107,6 +107,14 @@
   border-radius: var(--radius-sm);
 }
 
+.success {
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--text-h);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+}
+
 .authCard {
   max-width: 520px;
 }

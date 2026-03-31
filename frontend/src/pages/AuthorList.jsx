@@ -37,6 +37,15 @@ function AuthorList() {
   return (
     <div className="page">
       <div className="pageHeader">
+        <div className="toolbar">
+          <button
+            type="button"
+            className="btn btnSecondary"
+            onClick={() => navigate(-1)}
+          >
+             Back
+          </button>
+        </div>
         <h2>All Authors</h2>
       </div>
 

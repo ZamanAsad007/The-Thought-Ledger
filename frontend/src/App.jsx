@@ -12,6 +12,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import AuthorDashboardProfile from "./pages/AuthorDashboard";
 import EditBlogPage from "./pages/EditBlog";
+import AdminDashboardPage from "./pages/AdminDashboard";
+import AdminAuthorsPage from "./pages/AdminAuthors";
+import AdminBlogsPage from "./pages/AdminBlogs";
+import AdminCategoriesPage from "./pages/AdminCat";
+import AdminRoute from "./components/AdminRoute";
 
 import "./App.css";
 
@@ -57,6 +62,38 @@ function App() {
               <ProtectedRoute>
                 <EditBlogPage />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboardPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/authors"
+            element={
+              <AdminRoute>
+                <AdminAuthorsPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/blogs"
+            element={
+              <AdminRoute>
+                <AdminBlogsPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/categories"
+            element={
+              <AdminRoute>
+                <AdminCategoriesPage />
+              </AdminRoute>
             }
           />
         </Routes>

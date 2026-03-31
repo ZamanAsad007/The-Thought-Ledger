@@ -30,6 +30,37 @@ router.get('/authors/:id', async (req, res) => {
   }
 })
 
+router.get('/authors/:id/stats', async (req, res) => {
+  try {
+    const blogs = await Blog.find({ author: req.params.id, published: true })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .populate('category', 'name color')
+
+    const categoryCount = {}
+    blogs.forEach((blog) => {
+      if (!blog.category) return
+      const name = blog.category.name
+      const color = blog.category.color
+      if (categoryCount[name]) {
+        categoryCount[name].count++
+      } else {
+        categoryCount[name] = { count: 1, color }
+      }
+    })
+
+    const chartData = Object.keys(categoryCount).map((name) => ({
+      name,
+      value: categoryCount[name].count,
+      color: categoryCount[name].color,
+    }))
+
+    res.json(chartData)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 router.get('/categories', async(req, res)=>{
   try{
     const categories = await Category.find()
@@ -53,4 +84,35 @@ router.put('/profile', protect, async(req, res)=>{
     res.status(500).json({message:err.message})
   }
 })
+
+router.get('/my/stats',protect, async(req, res)=>{
+  try{
+    const blogs= await Blog.find({author:req.user._id})
+    .sort({createdAt:-1})
+    .limit(20)
+    .populate('category', 'name color')
+    const categoryCount={}
+    blogs.forEach(blog=>{
+      if(blog.category){
+        const name= blog.category.name
+        const color= blog.category.color
+        if(categoryCount[name]){
+          categoryCount[name].count++
+        }else{
+          categoryCount[name]={count:1, color}
+        }
+      }
+    })
+    const chartData = Object.keys(categoryCount).map(name=>({
+      name,
+      value: categoryCount[name].count,
+      color: categoryCount[name].color
+    }))
+    res.json(chartData)
+    
+  }catch(err){
+    res.status(500).json({message:err.message})
+  }
+})
+
 module.exports = router
