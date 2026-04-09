@@ -1,3 +1,29 @@
+.appLayout {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  min-height: 100svh;
+  width: 100%;
+}
+
+.layoutMiddle {
+  grid-column: 2;
+  min-width: 0;
+}
+
+.layoutContent {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .appLayout {
+    grid-template-columns: 0 100% 0;
+  }
+
+  .layoutMiddle {
+    grid-column: 2;
+  }
+}
+
 .page {
   padding: 56px 28px;
   max-width: none;

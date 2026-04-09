@@ -25,78 +25,82 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/authors" element={<AuthorListPage />} />
-          <Route path="/authors/:id" element={<AuthorProfilePage />} />
-          <Route path="/blogs/:id" element={<BlogDetailPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/add-blog"
-            element={
-              <ProtectedRoute>
-                <AddBlogPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/my-profile"
-            element={
-              <ProtectedRoute>
-                <AuthorDashboardProfile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/edit-blog/:id"
-            element={
-              <ProtectedRoute>
-                <EditBlogPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminDashboardPage />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/authors"
-            element={
-              <AdminRoute>
-                <AdminAuthorsPage />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/blogs"
-            element={
-              <AdminRoute>
-                <AdminBlogsPage />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/categories"
-            element={
-              <AdminRoute>
-                <AdminCategoriesPage />
-              </AdminRoute>
-            }
-          />
-        </Routes>
+        <div className="appLayout">
+          <main className="layoutMiddle layoutContent">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/authors" element={<AuthorListPage />} />
+              <Route path="/authors/:id" element={<AuthorProfilePage />} />
+              <Route path="/blogs/:id" element={<BlogDetailPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/add-blog"
+                element={
+                  <ProtectedRoute>
+                    <AddBlogPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-profile"
+                element={
+                  <ProtectedRoute>
+                    <AuthorDashboardProfile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/edit-blog/:id"
+                element={
+                  <ProtectedRoute>
+                    <EditBlogPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminDashboardPage />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/authors"
+                element={
+                  <AdminRoute>
+                    <AdminAuthorsPage />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/blogs"
+                element={
+                  <AdminRoute>
+                    <AdminBlogsPage />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/categories"
+                element={
+                  <AdminRoute>
+                    <AdminCategoriesPage />
+                  </AdminRoute>
+                }
+              />
+            </Routes>
+          </main>
+        </div>
       </Router>
     </AuthProvider>
   );
